@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 export PATH=/pytorch_env/bin:$PATH
 
-python AD_MSTMamba_main_10Nov24_v2.py \
+python MSTemba_main.py \
 -dataset tsu \
 -mode rgb \
--backbone clip \
--model hierarchical_vim \
+-backbone clip/i3d/ \
+-model mstemba \
 -train True \
--rgb_root /data/asinha13/projects/MAD/MS-TCT/data/smarthome_features_clip/ \
+-rgb_root /path/to/TSU_features/ \
 -num_clips 2500 \
 -skip 0 \
 --lr 4.5e-4 \
@@ -17,4 +17,4 @@ python AD_MSTMamba_main_10Nov24_v2.py \
 -alpha_l 1 \
 -beta_l 0.05 \
 -batch_size 1 \
--output_dir workdirs/abl_MSTMamba_4BLK_clip_SH_14Nov24/
+-output_dir /path/to/output_folder/
