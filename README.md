@@ -1,6 +1,8 @@
 <div align="center">
-<h1>MS-Temba: Multi-Scale Temporal Mamba for Efficient Temporal Action Detection</h1>
-   Arxiv Preprint: [arxiv 2501.06138](https://arxiv.org/abs/2501.06138)
+    <h1>MS-Temba: Multi-Scale Temporal Mamba for Efficient Temporal Action Detection</h1>
+    <a href="https://arxiv.org/abs/2501.06138" target="_blank">
+        <img src="https://img.shields.io/badge/arXiv-2501.06138-B31B1B?style=flat-square" alt="arXiv">
+    </a>
 </div>
 
 <div align="center">
