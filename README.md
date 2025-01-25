@@ -1,5 +1,6 @@
 <div align="center">
 <h1>MS-Temba: Multi-Scale Temporal Mamba for Efficient Temporal Action Detection</h1>
+  <h2> Arxiv Preprint: [arxiv 2501.06138](https://arxiv.org/abs/2501.06138)</h2>
 </div>
 
 <div align="center">
