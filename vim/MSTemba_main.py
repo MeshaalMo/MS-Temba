@@ -22,9 +22,6 @@ from timm.scheduler import create_scheduler
 from timm.optim import create_optimizer
 from timm.utils import NativeScaler, get_state_dict, ModelEma
 
-
-# import models_multifeaturescale_mamba_tokenrearrange_v2_fusions
-
 import models_MSTemba
 
 parser = argparse.ArgumentParser()
@@ -120,36 +117,9 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 print('Random_SEED:', SEED)
 
-
 batch_size = int(args.batch_size)
 
-
-# if args.dataset == 'charades':
 from charades_dataloader import Charades as Dataset
-
-# if str(args.unisize) == "True":
-#     print("uni-size padd all T to",args.num_clips)
-#     from charades_dataloader import collate_fn_unisize
-#     collate_fn_f = collate_fn_unisize(args.num_clips)
-#     collate_fn = collate_fn_f.charades_collate_fn_unisize
-# else:
-#     from charades_dataloader import mt_collate_fn as collate_fn
-
-#     if args.dataset == 'charades':
-#         train_split = '/data/asinha13/projects/MAD/MS-TCT/data/charades.json'
-#         test_split = train_split
-#         rgb_root =  args.rgb_root #'/data/asinha13/projects/mamba_action_detection/MAD/MS-TCT/data/charades_i3d_features' 
-#         flow_root = '/flow_feat_path/' # optional
-#         # rgb_of=[rgb_root,flow_root]
-#         classes = 157
-
-#     elif args.dataset == 'tsu':
-#         train_split = '/data/asinha13/projects/MAD/MS-TCT/data/smarthome_CS_51.json'
-#         test_split = train_split
-#         rgb_root =  args.rgb_root #'/data/asinha13/projects/mamba_action_detection/MAD/MS-TCT/data/charades_i3d_features' 
-#         flow_root = '/flow_feat_path/' # optional
-#         # rgb_of=[rgb_root,flow_root]
-#         classes = 51
 
 def load_data(train_split, val_split, root):
     # Load Data
@@ -254,16 +224,13 @@ def run_network(model, data, gpu, epoch=0, baseline=False):
 
     inputs = inputs.squeeze(3).squeeze(3)
 
-    # outputs_final,out_hm = model(inputs)
     outputs_final = model(inputs)
     # Logit
     probs_f = F.sigmoid(outputs_final) * mask.unsqueeze(2)
 
     # Loss
-    # loss_h = focal_loss(out_hm, hm)
     loss_f = F.binary_cross_entropy_with_logits(outputs_final, labels, size_average=False)
     loss_f = torch.sum(loss_f) / torch.sum(mask)
-    # loss = args.alpha_l * loss_f + args.beta_l * loss_h
     loss = args.alpha_l * loss_f
     corr = torch.sum(mask)
     tot = torch.sum(mask)
@@ -280,7 +247,6 @@ def train_step(model, gpu, optimizer, dataloader, epoch):
     for data in dataloader:
         optimizer.zero_grad()
         num_iter += 1
-        # breakpoint()
         outputs, loss, probs, err = run_network(model, data, gpu, epoch)
         apm.add(probs.data.cpu().numpy()[0], data[2].numpy()[0])
         error += err.data
@@ -362,23 +328,21 @@ if __name__ == '__main__':
     if args.dataset == 'charades':
         train_split = '/data/asinha13/projects/MAD/MS-TCT/data/charades.json'
         test_split = train_split
-        rgb_root =  args.rgb_root #'/data/asinha13/projects/mamba_action_detection/MAD/MS-TCT/data/charades_i3d_features' 
+        rgb_root =  args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
-        # rgb_of=[rgb_root,flow_root]
         classes = 157
         
     elif args.dataset == 'tsu':
         train_split = '/data/asinha13/projects/MAD/MS-TCT/data/smarthome_CS_51.json'
         test_split = train_split
-        rgb_root =  args.rgb_root #'/data/asinha13/projects/mamba_action_detection/MAD/MS-TCT/data/charades_i3d_features' 
+        rgb_root =  args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
-        # rgb_of=[rgb_root,flow_root]
         classes = 51
 
     elif args.dataset == 'multithumos':
         train_split = '/data/asinha13/projects/MAD/MS-TCT/data/modified_multithumos.json'
         test_split = train_split
-        rgb_root = args.rgb_root #'/data/asinha13/projects/MAD/MS-TCT/data/multithumos_features_i3d/'
+        rgb_root = args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
         classes = 65
 
@@ -388,9 +352,6 @@ if __name__ == '__main__':
     elif args.mode == 'rgb':
         print('RGB mode', rgb_root)
         dataloaders, datasets = load_data(train_split, test_split, rgb_root)
-
-    # if not os.path.exists('./save_logit'):
-    #     os.makedirs('./save_logit')
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -415,15 +376,11 @@ if __name__ == '__main__':
             in_feat_dim=in_feat_dim
         )
         model.cuda()
-        # breakpoint()
+
         criterion = LabelSmoothingCrossEntropy()
  
         optimizer = create_optimizer(args, model)
         lr_scheduler, _ = create_scheduler(args, optimizer)
-
-        # lr = float(args.lr)
-        # optimizer = optim.Adam(model.parameters(), lr=lr)
-        # lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=8, verbose=True)
 
         if args.model_ema:
             model_ema = ModelEma(
