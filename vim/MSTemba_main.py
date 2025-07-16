@@ -31,7 +31,7 @@ parser.add_argument('-backbone', type=str, default='i3d')
 parser.add_argument('-comp_info', type=str)
 parser.add_argument('-gpu', type=str, default='4')
 parser.add_argument('-dataset', type=str, default='charades')
-parser.add_argument('-rgb_root', type=str, default='/data/asinha13/projects/MAD/MS-TCT/data/charades.json')
+parser.add_argument('-rgb_root', type=str, default='/path/to/charades.json')
 parser.add_argument('-flow_root', type=str, default='no_root')
 parser.add_argument('-type', type=str, default='original')
 # parser.add_argument('-lr', type=str, default='0.1')
@@ -326,21 +326,21 @@ if __name__ == '__main__':
         from charades_dataloader import mt_collate_fn as collate_fn
     
     if args.dataset == 'charades':
-        train_split = '/data/asinha13/projects/MAD/MS-TCT/data/charades.json'
+        train_split = '/path/to/charades.json'
         test_split = train_split
         rgb_root =  args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
         classes = 157
         
     elif args.dataset == 'tsu':
-        train_split = '/data/asinha13/projects/MAD/MS-TCT/data/smarthome_CS_51.json'
+        train_split = '/path/to/smarthome.json'
         test_split = train_split
         rgb_root =  args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
         classes = 51
 
     elif args.dataset == 'multithumos':
-        train_split = '/data/asinha13/projects/MAD/MS-TCT/data/modified_multithumos.json'
+        train_split = '/path/to/multithumos.json'
         test_split = train_split
         rgb_root = args.rgb_root 
         flow_root = '/flow_feat_path/' # optional
