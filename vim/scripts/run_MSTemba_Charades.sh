@@ -15,5 +15,5 @@ python MSTemba_main.py \
 -unisize True \
 -alpha_l 1 \
 -beta_l 0.05 \
--batch_size 32 \
+-batch_size 5 \
 -output_dir /path/to/output_folder/
